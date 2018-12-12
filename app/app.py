@@ -33,8 +33,11 @@ def greet():
 
 @app.route('/process-url', methods=['POST'])
 def process_url():
+    line_token = request.values['line_token']
     url = request.values['url']
-    res = requests.get(url, stream=True)
+    res = requests.get(url, stream=True, headers={
+        'Authorization': f'Bearer {line_token}'
+    })
 
     if res.status == 200:
         filename = secure_filename(url) + datetime.now().strftime('%Y-%m-%d(%H-%M-%S)')
