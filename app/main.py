@@ -8,6 +8,7 @@ arg_parser.add_argument('-T', '--enable-test-upload', help='enable test upload f
     action='store_true', default=False)
 arg_parser.add_argument('-k', '--keep-files', help='keep uploaded files instead of deleting them',
     action='store_true', default=False)
+arg_parser.add_argument('-H', '--host', help='set the server\'s listen address', default=None)
 
 arguments = arg_parser.parse_args()
 print(arguments)
@@ -17,4 +18,4 @@ print(f'starting app at port {arguments.port}')
 app.config['TEST_UPLOAD_FORM'] = arguments.enable_test_upload
 app.config['KEEP_FILES'] = arguments.keep_files
 
-app.run(port=arguments.port)
+app.run(port=arguments.port, host=arguments.host)
