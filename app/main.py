@@ -12,9 +12,9 @@ arg_parser.add_argument('-k', '--keep-files', help='keep uploaded files instead 
 arguments = arg_parser.parse_args()
 print(arguments)
 
-print(f'starting app at port {arguments.port}')
+print(f'starting app at port {arguments.port[0]}')
 
 app.config['TEST_UPLOAD_FORM'] = arguments.enable_test_upload
 app.config['KEEP_FILES'] = arguments.keep_files
 
-app.run(port=arguments.port)
+app.run(port=arguments.port[0])
