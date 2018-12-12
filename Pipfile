@@ -14,6 +14,7 @@ pytesseract = "*"
 pandas = "*"
 opencv-python = "*"
 jellyfish = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
