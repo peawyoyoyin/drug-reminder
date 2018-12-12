@@ -1,9 +1,12 @@
 import os
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import numpy as np
 from werkzeug.utils import secure_filename
 
 from datetime import datetime
+
+from parser import parser
+from tesseract import tesseract
 
 import imageio
 
@@ -41,12 +44,14 @@ def process_image():
 
             image_as_nparray = np.array(imageio.imread(save_destination))
 
-            print(type(image_as_nparray), image_as_nparray.shape)
+            # print(type(image_as_nparray), image_as_nparray.shape)
+            text_from_image = tesseract.getText(image_as_nparray)
+            drug_info = parser.getDrugInfo(text_from_image)
 
             if not app.config['KEEP_FILES']:
                 os.remove(save_destination)
 
-            return 'something happened!'
+            return jsonify(drug_info)
 
 @app.route('/test-upload', methods=['GET'])
 def test_upload_form():
