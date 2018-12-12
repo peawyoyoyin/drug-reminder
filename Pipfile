@@ -13,6 +13,7 @@ imageio = "*"
 pytesseract = "*"
 pandas = "*"
 opencv-python = "*"
+jellyfish = "*"
 
 [requires]
 python_version = "3.7"
