@@ -8,36 +8,36 @@ def getText(image, offset=None):
     data = pytesseract.image_to_data(image_gray, lang='tha', output_type='dict')
     result = pd.DataFrame(data)
     oh, ow = image.shape[:2]
-  
+
     result = result.drop('conf', axis=1).join(result['conf'].apply(int)) \
         .query('conf>50') \
         .query(f'height != {oh} & width != {ow}') \
         .query(f'top != 0 & top + height != {oh} & left != 0 & left + width != {ow}')
-  
+
     output = []
 
     for block in result['block_num'].unique():
         tb = result[result['block_num'] == block]
         for line in tb['line_num'].unique():
-        tb2 = tb[tb['line_num'] == line]
-        top, left = tb2['top'].min(), tb2['left'].min()
-        right, bot = (tb2['left'] + tb2['width']).max(), (tb2['top']+tb2['height']).max()
+            tb2 = tb[tb['line_num'] == line]
+            top, left = tb2['top'].min(), tb2['left'].min()
+            right, bot = (tb2['left'] + tb2['width']).max(), (tb2['top']+tb2['height']).max()
 
-        text = ''.join(list(tb2['text']))
-        off = offset
-        if offset == None:
-            off = int((bot-top) * (1/2))
+            text = ''.join(list(tb2['text']))
+            off = offset
+            if offset == None:
+                off = int((bot-top) * (1/2))
 
-        if text.strip():
-            cap_top = top-off if top-off > 0 else 0
-            cap_bot = bot+off if bot+off < oh else oh
-            cap_left = left-off if left-off > 0 else 0
-            cap_right = right+off if right+off < ow else ow
-            
-            crop = image_gray[cap_top:cap_bot, cap_left:cap_right]
-            better_text = pytesseract.image_to_string(crop, lang='tha', config='--psm 7')
-            
-            output.append(better_text)
+            if text.strip():
+                cap_top = top-off if top-off > 0 else 0
+                cap_bot = bot+off if bot+off < oh else oh
+                cap_left = left-off if left-off > 0 else 0
+                cap_right = right+off if right+off < ow else ow
+                
+                crop = image_gray[cap_top:cap_bot, cap_left:cap_right]
+                better_text = pytesseract.image_to_string(crop, lang='tha', config='--psm 7')
+                
+                output.append(better_text)
     
     return ' '.join(output)
 
