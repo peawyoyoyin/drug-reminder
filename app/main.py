@@ -12,8 +12,6 @@ arg_parser.add_argument('-k', '--keep-files', help='keep uploaded files instead 
 arguments = arg_parser.parse_args()
 print(arguments)
 
-exit()
-
 print(f'starting app at port {arguments.port}')
 
 app.config['TEST_UPLOAD_FORM'] = arguments.enable_test_upload
