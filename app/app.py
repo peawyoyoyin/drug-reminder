@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 
 from datetime import datetime
 
-from parser import parser
+from druginfo import parser
 from tesseract import tesseract
 
 import imageio
