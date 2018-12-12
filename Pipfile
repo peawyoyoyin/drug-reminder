@@ -10,6 +10,9 @@ pylint = "*"
 flask = "*"
 numpy = "*"
 imageio = "*"
+pytesseract = "*"
+pandas = "*"
+opencv-python = "*"
 
 [requires]
 python_version = "3.7"

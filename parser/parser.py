@@ -1,81 +1,122 @@
-from colorama import Fore, Style
 import jellyfish as jf
+import numpy as np
 
 tokens_of_interests = {
-    # 'take': ['รับประทาน'],
-    'eachday': ['วันละ'],
-    'eachtime': ['ครั้งละ'],
-    'time': ['เช้า', 'กลางวัน', 'เย็น'],
-    'event': ['หลังอาหาร', 'ก่อนอาหาร', 'ก่อนนอน']
-    # 'times': ['ครั้ง']
+    'per_times': ['ครั้งละ'],
+    'per_hour': ['ทุกๆ'],
+    'per_day': ['วันละ'],
+    'per_week': ['สัปดาห์ละ'],
+    'time': [['หลังอาหาร','ก่อนอาหาร','ก่อนนอน'], ['เช้า','กลางวัน','เย็น']],
 }
 
-def capture_token(token, text):
-    markers = []
-    distances = []
 
-    for i in range(len(text)-len(token)):
-        sliced = text[i:i+len(token)]
-
-        distance = len(token) - jf.levenshtein_distance(token, sliced)
-        distances.append(distance)
-
-    for i in range(len(distances)-len(token)):
-        max_val = max(distances[i:i+len(token)])
-
-        found = False
-        for j in range(len(token)):
-            if distances[i+j] != max_val:
-                distances[i+j] = 0
-            else:
-                if found:
-                    distances[i+j] = 0
-                else:
-                    found = True
-
-    for i in range(len(distances)):
-        if distances[i] > len(token) - 2:
-            markers.append(i)
-
-    return markers
-
-def decorate_text_using_markers(text, markers):
-    l = []
-
-    for start_tag, end_tag, marker in markers:
-        token, positions = marker
+def findToken(data, token, max_distance = 2):
+  result = []
+  
+  for j in range(1,max_distance+1):
+    tkl = len(token)+j
+    if len(data) >= tkl:
+      dl = []
+      for i in range(len(data)-tkl):
+        distance = jellyfish.levenshtein_distance(data[i:i+tkl], token)
+        dl.append(distance)
+      for i in range(tkl):
+        dl.append(tkl)
+      result.append(dl)
+    else:
+      dl = []
+      for i in range(len(data)):
+        dl.append(len(token))
+      result.append(dl)
+  
+  if len(data) >= len(token):
+    dl = []
+    for i in range(len(data)-len(token)):
+      distance = jellyfish.levenshtein_distance(data[i:i+len(token)], token)
+      dl.append(distance)
+    for i in range(len(token)):
+      dl.append(len(token))
+    result.append(dl)
+  else:
+    dl = []
+    for i in range(len(data)):
+      dl.append(len(token))
+    result.append(dl)
+  
+  for j in range(1,max_distance+1):
+    tkl = len(token)-j
+    if len(data) >= tkl:
+      dl = []   
+      for i in range(len(data)-tkl):
+        distance = jellyfish.levenshtein_distance(data[i:i+tkl], token)
+        dl.append(distance)
+      for i in range(tkl):
+        dl.append(tkl)
+      result.append(dl)
+    else:
+      dl = []
+      for i in range(len(data)):
+        dl.append(len(token))
+      result.append(dl)
+      
+   
+  if len(result) == 0:
+    return
+  for dl in result:   
+    if len(dl) == 0:
+      return
+  eachResult = np.array(result)
+  lowest_i = np.unravel_index(np.argmin(eachResult),eachResult.shape)
+  if eachResult[lowest_i[0]][lowest_i[1]] <= max_distance:
+    next_i = lowest_i[1]+len(token)+max_distance-lowest_i[0]
+    return data[lowest_i[1]:next_i], data[next_i:]
     
-        for position in positions:
-            l.append((position, position+len(token), start_tag, end_tag))
 
-    l.sort()
-
-    d = []
-    current_pos = 0
-    for start_position, end_position, start_tag, end_tag in l:
-        d.append(text[current_pos:start_position])
-        d.append(Fore.GREEN+start_tag)
-        d.append(text[start_position:end_position])
-        d.append(end_tag+Style.RESET_ALL)
-        current_pos = end_position
-    d.append(text[current_pos:])
+def getDrugInfo(data):
+  output = {}
+  
+  res = findToken(data, tokens_of_interests['per_times'][0])
+  if res == None:
+    pass
+  else:
+    t = res[1].strip()
+    output['per_times'] = t[0]
+  
+  res = findToken(data, tokens_of_interests['per_week'][0])
+  if res == None:
+    res = findToken(data, tokens_of_interests['per_day'][0])
+    if res == None:
+      res = findToken(data, tokens_of_interests['per_hour'][0], max_distance=1)
+      if res == None:
+        pass
+      else:
+        t = res[1].strip()
+        output['per_hour'] = t[0]
+    else:
+      t = res[1].strip()
+      output['per_day'] = t[0]
+  else:
+    t = res[1].strip()
+    output['per_week'] = t[0]
     
-    return ''.join(d)
-
-def parse_text(text: str):
-    text = text.strip()
-    if not text:
-        return
-    print(f'\n{Fore.YELLOW}BEGIN  parsing text{Style.RESET_ALL}')
-    print('original: \n', f'{Fore.RED}<ORIGINAL>\n{Style.RESET_ALL}{text}{Fore.RED}\n<ORIGINAL>{Style.RESET_ALL}')
-    markers = []
-    for category in tokens_of_interests:
-        for token in tokens_of_interests[category]:
-            markers.append((f'<{category}>', f'</{category}>', (token, capture_token(token, text))))
-    print(markers)
-    parsed = decorate_text_using_markers(text, markers)
-    print('parsed: \n', f'{Fore.RED}<PARSED>\n{Style.RESET_ALL}{parsed}{Fore.RED}\n<PARSED>{Style.RESET_ALL}')
-    print(f'{Fore.YELLOW}END parsing text{Style.RESET_ALL}\n')
+  for token in tokens_of_interests['time'][0]:
+    res = findToken(data, token)
+    if res:
+      output['time'] = token
+      break
+  
+  for token in tokens_of_interests['time'][1]:
+    max_distance = 1
+    if len(token) > 4:
+      max_distance = 2
+    
+    res = findToken(data, token, max_distance=max_distance)
+    if res:
+      if 'time2' not in output:
+        output['time2'] = []
+      output['time2'].append(token)
+  
+  return output
 
 if __name__ == '__main__':
     with open('text.txt') as f:
