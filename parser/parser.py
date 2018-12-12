@@ -18,7 +18,7 @@ def findToken(data, token, max_distance = 2):
     if len(data) >= tkl:
       dl = []
       for i in range(len(data)-tkl):
-        distance = jellyfish.levenshtein_distance(data[i:i+tkl], token)
+        distance = jf.levenshtein_distance(data[i:i+tkl], token)
         dl.append(distance)
       for i in range(tkl):
         dl.append(tkl)
@@ -32,7 +32,7 @@ def findToken(data, token, max_distance = 2):
   if len(data) >= len(token):
     dl = []
     for i in range(len(data)-len(token)):
-      distance = jellyfish.levenshtein_distance(data[i:i+len(token)], token)
+      distance = jf.levenshtein_distance(data[i:i+len(token)], token)
       dl.append(distance)
     for i in range(len(token)):
       dl.append(len(token))
@@ -48,7 +48,7 @@ def findToken(data, token, max_distance = 2):
     if len(data) >= tkl:
       dl = []   
       for i in range(len(data)-tkl):
-        distance = jellyfish.levenshtein_distance(data[i:i+tkl], token)
+        distance = jf.levenshtein_distance(data[i:i+tkl], token)
         dl.append(distance)
       for i in range(tkl):
         dl.append(tkl)
@@ -123,5 +123,5 @@ if __name__ == '__main__':
         lines = f.readlines()
     
     for line in lines:
-        parse_text(line)
+        getDrugInfo(line)
     # parse_text(lines[1])
