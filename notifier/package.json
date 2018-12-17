@@ -1,19 +1,21 @@
 {
-  "name": "notifier",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "linebot": "^1.4.1",
-    "node-cron": "^2.0.3",
-    "short-uuid": "^3.1.0",
-    "uuid": "^3.3.2"
-  }
+    "name": "notifier",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node bot.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^0.18.0",
+        "form-data": "^2.3.3",
+        "linebot": "^1.4.1",
+        "node-cron": "^2.0.3",
+        "short-uuid": "^3.1.0",
+        "uuid": "^3.3.2"
+    }
 }

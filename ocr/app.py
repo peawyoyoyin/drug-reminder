@@ -39,7 +39,7 @@ def process_url():
         'Authorization': f'Bearer {line_token}'
     })
 
-    if res.status == 200:
+    if res.status_code == 200:
         filename = secure_filename(url) + datetime.now().strftime('%Y-%m-%d(%H-%M-%S)')
         save_destination = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         with open(save_destination, 'wb') as tmp_image_file:
