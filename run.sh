@@ -1,5 +1,5 @@
 cd ./ocr
-python main.py &
+python3 main.py &
 cd ..
 cd ./notifier
 node bot.js &
