@@ -3,7 +3,7 @@ const FormData = require('form-data')
 let botConfig
 try {
     botConfig = require('./bot-config')
-} catch {
+} catch (e) {
     console.error('bot config file not found, create bot-config.js first')
     exit(1)
 }
