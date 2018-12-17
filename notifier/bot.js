@@ -1,5 +1,6 @@
 const LineBot = require('linebot')
 const FormData = require('form-data')
+const axios = require('axios')
 let botConfig
 try {
     botConfig = require('./bot-config')
@@ -16,7 +17,7 @@ bot.on('message', async event => {
         const bodyFormData = new FormData()
         bodyFormData.append(
             'url',
-            `https://api.line.me/v2/bot/message/${events.message.id}/content`
+            `https://api.line.me/v2/bot/message/${event.message.id}/content`
         )
         bodyFormData.append('line_token', botConfig.channelAccessToken)
         const drugInfo = await axios({
@@ -24,7 +25,7 @@ bot.on('message', async event => {
             url: 'http://127.0.0.1:3004/process-url',
             data: bodyFormData,
             headers: bodyFormData.getHeaders()
-        }).carch(e => console.error(e))
+        }).catch(e => console.error(e))
         console.log(drugInfo)
     }
 
