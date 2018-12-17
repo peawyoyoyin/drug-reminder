@@ -75,6 +75,6 @@ bot.on('message', async event => {
     }
 })
 
-bot.listen('/bot', 80, () => {
-    console.log('bot listening on port 80')
+bot.listen('/bot', 443, () => {
+    console.log('bot listening on port 443')
 })
