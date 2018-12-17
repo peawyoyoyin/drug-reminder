@@ -21,7 +21,7 @@ bot.on('message', async event => {
         bodyFormData.append('line_token', botConfig.channelAccessToken)
         const drugInfo = await axios({
             method: 'post',
-            url: 'http://35.240.213.57/process-url',
+            url: 'http://127.0.0.1:3004/process-url',
             data: bodyFormData,
             headers: bodyFormData.getHeaders()
         }).carch(e => console.error(e))
@@ -75,6 +75,6 @@ bot.on('message', async event => {
     }
 })
 
-bot.listen('/bot', 3004, () => {
-    console.log('bot listening on port 3004')
+bot.listen('/bot', 80, () => {
+    console.log('bot listening on port 80')
 })
