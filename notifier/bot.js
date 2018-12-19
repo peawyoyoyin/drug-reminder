@@ -1,9 +1,6 @@
 const LineBot = require('linebot')
 const FormData = require('form-data')
 const axios = require('axios')
-const LocalStorage = require('node-localstorage').LocalStorage
-
-let localStorage = new LocalStorage('./tmp')
 
 let botConfig
 try {
