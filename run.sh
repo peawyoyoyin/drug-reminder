@@ -1,5 +1,5 @@
 cd ./ocr
-python3 main.py -p 3004 -H 127.0.0.1 &
+python3 main.py &
 cd ..
 cd ./notifier
 node bot.js &

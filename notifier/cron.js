@@ -3,10 +3,10 @@ const UUID = require('short-uuid')
 
 class CronJobs {
   constructor() {
-    this.users = {}
+    this.jobs = {}
   }
 
-  registerNewJob(userId, job, cronExpression, opts = {}) {
+  registerNewJob(job, cronExpression, opts = {}) {
     const jobId = UUID.generate()
 
     if(!Cron.validate(cronExpression)) {
@@ -19,28 +19,21 @@ class CronJobs {
       return
     }
 
-    const task = Cron.schedule(cronExpression, job)
+    const task = Cron.schedule(cronExpression, () => job(jobId))
 
-    if(this.users[userId] === undefined) {
-      this.users[userId] = {}
-    }
-
-    this.users[userId][jobId] = {
+    this.jobs[jobId] = {
       task,
     }
 
     return jobId
   }
 
-  stopJob(userId, jobId) {
-    if(this.users[userId] === undefined) {
+  stopJob(jobId) {
+    if(this.jobs[jobId] === undefined) {
       return false
     }
-    if(this.users[userId][jobId] === undefined) {
-      return false
-    }
-    this.users[userId][jobId].task.destroy()
-    delete this.users[userId][jobId]
+    this.jobs[jobId].task.destroy()
+    delete this.jobs[jobId]
     return true
   }
 }
