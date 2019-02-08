@@ -248,7 +248,7 @@ bot.on('message', async event => {
                     })
                 }
                 if (['เวลา', 'เวลาที่รับประทาน'].includes(field)) {
-                    user.tmp['time'] = event.message.text.split(' ').slice(2)
+                    user.tmp['time'] = event.message.text.split(' ')[2]
                 }
                 if (['ช่วง', 'ช่วงเวลา'].includes(field)) {
                     user.tmp['time2'] = event.message.text.split(' ').slice(2)

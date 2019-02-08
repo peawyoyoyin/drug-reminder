@@ -37,15 +37,15 @@ const createConsumptionInformationView = consumption => {
         result.push(createTextRow('วันละ', `- ครั้ง`))
     }
 
-    if (consumption.time !== undefined && consumption.time !== []) {
-        result.push(createTextRow('รับประทานเวลา', consumption.time.join(', ')))
+    if (consumption.time !== undefined) {
+        result.push(createTextRow('เวลาที่รับประทาน', consumption.time))
     } else {
-        result.push(createTextRow('รับประทานเวลา', '-'))
+        result.push(createTextRow('เวลาที่รับประทาน', '-'))
     }
 
     if (consumption.time2 !== undefined && consumption.time2 !== []) {
         result.push(
-            createTextRow('ช่วงที่รับประทาน', consumption.time2.join(', '))
+            createTextRow('รับประทานช่วง', consumption.time2.join(', '))
         )
     } else {
         result.push(createTextRow('ช่วงที่รับประทาน', '-'))
