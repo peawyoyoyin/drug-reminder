@@ -189,7 +189,7 @@ bot.on('message', async event => {
                 user.tmp.name = event.message.text.split(' ')[1]
                 user.state = 'ตั้งชื่อเรียบร้อย'
                 // reply(event, user.tmp)
-                event.reply(
+                event.reply([
                     replies.createNewDrugInformationMessage({
                         drugName: user.tmp.name,
                         consumption: user.tmp,
@@ -201,8 +201,9 @@ bot.on('message', async event => {
                             type: 'message',
                             text: 'แก้ไข'
                         }
-                    })
-                )
+                    }),
+                    replies.createEditDialogMessage()
+                ])
             } else {
                 event.reply({
                     type: 'text',
@@ -246,10 +247,10 @@ bot.on('message', async event => {
                     })
                 }
                 if (['เวลา', 'เวลาที่รับประทาน'].includes(field)) {
-                    user.tmp['time'] = event.message.text.split(' ')[2]
+                    user.tmp['time'] = event.message.text.split(' ').slice(2)
                 }
                 if (['ช่วง', 'ช่วงเวลา'].includes(field)) {
-                    user.tmp['time2'] = event.message.text.split(' ')[2]
+                    user.tmp['time2'] = event.message.text.split(' ').slice(2)
                 }
                 user.tmp = cleanNotNumber(user.tmp)
                 // reply(event, user.tmp)
