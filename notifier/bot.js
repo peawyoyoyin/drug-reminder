@@ -66,49 +66,56 @@ function setDrugTime(drugInfo, time) {
 }
 
 function genContent(drugInfo) {
-    const template = [{
-        name: 'name',
-        content: (value) => ({
-            type: "text",
-            text: "ยา: " + value,
-            wrap: true,
-        })
-    }, {
-        name: 'per_times',
-        content: (value) => ({
-            type: "text",
-            text: "รับประทานครั้งละ " + value + " เม็ด",
-            wrap: true,
-        })
-    }, {
-        name: 'per_day',
-        content: (value) => ({
-            type: "text",
-            text: "วันละ " + value + " ครั้ง",
-            wrap: true,
-        })
-    }, {
-        name: 'per_week',
-        content: (value) => ({
-            type: "text",
-            text: "สัปดาห์ละ " + value + " ครั้ง",
-            wrap: true,
-        })
-    }, {
-        name: 'time',
-        content: (value) => ({
-            type: "text",
-            text: "เวลาที่รับประทาน: " + value,
-            wrap: true,
-        })
-    }, {
-        name: 'time2',
-        content: (value) => ({
-            type: "text",
-            text: "ช่วง: " + value,
-            wrap: true,
-        })
-    }]
+    const template = [
+        {
+            name: 'name',
+            content: value => ({
+                type: 'text',
+                text: 'ยา: ' + value,
+                wrap: true
+            })
+        },
+        {
+            name: 'per_times',
+            content: value => ({
+                type: 'text',
+                text: 'รับประทานครั้งละ ' + value + ' เม็ด',
+                wrap: true
+            })
+        },
+        {
+            name: 'per_day',
+            content: value => ({
+                type: 'text',
+                text: 'วันละ ' + value + ' ครั้ง',
+                wrap: true
+            })
+        },
+        {
+            name: 'per_week',
+            content: value => ({
+                type: 'text',
+                text: 'สัปดาห์ละ ' + value + ' ครั้ง',
+                wrap: true
+            })
+        },
+        {
+            name: 'time',
+            content: value => ({
+                type: 'text',
+                text: 'เวลาที่รับประทาน: ' + value,
+                wrap: true
+            })
+        },
+        {
+            name: 'time2',
+            content: value => ({
+                type: 'text',
+                text: 'ช่วง: ' + value,
+                wrap: true
+            })
+        }
+    ]
     const output = []
     for (let c of template) {
         if (drugInfo[c.name]) {
@@ -120,14 +127,17 @@ function genContent(drugInfo) {
 
 function createNotificationJob(userId, opts) {
     return () => {
-        bot.push(userId, replies.createNotificationMessage({
-            drugName: opts.drugName,
-            timeDescription: '',
-            cancelAction: {
-                type: 'message',
-                text: `ยกเลิก ${opts.drugName}`
-            }
-        }))
+        bot.push(
+            userId,
+            replies.createNotificationMessage({
+                drugName: opts.drugName,
+                timeDescription: '',
+                cancelAction: {
+                    type: 'message',
+                    text: `ยกเลิก ${opts.drugName}`
+                }
+            })
+        )
     }
 }
 
@@ -137,7 +147,7 @@ consumption = {
     per_day: 3,
     // per_week: 1
     // per_hour: 4
-    time: ['เช้า','กลางวัน','เย็น'/*ก่อนนอน*/],
+    time: ['เช้า', 'กลางวัน', 'เย็น' /*ก่อนนอน*/],
     time2: ['ก่อนอาหาร', 'หลังอาหาร']
 }
 
@@ -152,12 +162,10 @@ bot.on('message', async event => {
             bodyFormData.append(
                 'url',
                 `https://api.line.me/v2/bot/message/${event.message.id}/content`
-                )
+            )
             event.reply(replies.createOnDrugLabelReceivedMessage())
             bodyFormData.append('line_token', botConfig.channelAccessToken)
-            const {
-                data
-            } = await axios({
+            const { data } = await axios({
                 method: 'post',
                 url: 'http://127.0.0.1:3000/process-url',
                 data: bodyFormData,
@@ -181,18 +189,20 @@ bot.on('message', async event => {
                 user.tmp.name = event.message.text.split(' ')[1]
                 user.state = 'ตั้งชื่อเรียบร้อย'
                 // reply(event, user.tmp)
-                event.reply(replies.createNewDrugInformationMessage({
-                    drugName: user.tmp.name,
-                    consumption: user.tmp,
-                    confirmAction: {
-                        'type': 'message',
-                        'text': 'ยืนยัน'
-                    },
-                    editAction: {
-                        'type': 'message',
-                        'text': 'แก้ไข'
-                    }
-                }))
+                event.reply(
+                    replies.createNewDrugInformationMessage({
+                        drugName: user.tmp.name,
+                        consumption: user.tmp,
+                        confirmAction: {
+                            type: 'message',
+                            text: 'ยืนยัน'
+                        },
+                        editAction: {
+                            type: 'message',
+                            text: 'แก้ไข'
+                        }
+                    })
+                )
             } else {
                 event.reply({
                     type: 'text',
@@ -209,22 +219,30 @@ bot.on('message', async event => {
                 if (['ชื่อ', 'ยา'].includes(field)) {
                     user.tmp['name'] = event.message.text.split(' ')[2]
                 }
-                if (['จำนวนเม็ด', 'จำนวน', 'ปริมาณ', 'ปริมาณยา', 'ครั้งละ'].includes(field)) {
+                if (
+                    [
+                        'จำนวนเม็ด',
+                        'จำนวน',
+                        'ปริมาณ',
+                        'ปริมาณยา',
+                        'ครั้งละ'
+                    ].includes(field)
+                ) {
                     user.tmp['per_times'] = event.message.text.split(' ')[2]
                 }
                 if (['วันละ', 'วัน', 'ปริมาณ', 'ปริมาณยา'].includes(field)) {
                     user.tmp = setDrugTime(user.tmp, {
-                        'per_day': event.message.text.split(' ')[2]
+                        per_day: event.message.text.split(' ')[2]
                     })
                 }
                 if (['สัปดาห์ละ', 'สัปดาห์'].includes(field)) {
                     user.tmp = setDrugTime(user.tmp, {
-                        'per_week': event.message.text.split(' ')[2]
+                        per_week: event.message.text.split(' ')[2]
                     })
                 }
                 if (['ชั่วโมง'].includes(field)) {
                     user.tmp = setDrugTime(user.tmp, {
-                        'per_hour': event.message.text.split(' ')[2]
+                        per_hour: event.message.text.split(' ')[2]
                     })
                 }
                 if (['เวลา', 'เวลาที่รับประทาน'].includes(field)) {
@@ -235,18 +253,20 @@ bot.on('message', async event => {
                 }
                 user.tmp = cleanNotNumber(user.tmp)
                 // reply(event, user.tmp)
-                event.reply(replies.createNewDrugInformationMessage({
-                    drugName: user.tmp.name,
-                    consumption: user.tmp,
-                    confirmAction: {
-                        'type': 'message',
-                        'text': 'ยืนยัน'
-                    },
-                    editAction: {
-                        'type': 'message',
-                        'text': 'แก้ไข'
-                    }
-                }))
+                event.reply(
+                    replies.createNewDrugInformationMessage({
+                        drugName: user.tmp.name,
+                        consumption: user.tmp,
+                        confirmAction: {
+                            type: 'message',
+                            text: 'ยืนยัน'
+                        },
+                        editAction: {
+                            type: 'message',
+                            text: 'แก้ไข'
+                        }
+                    })
+                )
             } else {
                 event.reply({
                     type: 'text',
@@ -298,15 +318,18 @@ bot.on('message', async event => {
             const jobs = []
             for (let t of time2) {
                 let second =
-                    t === 'เช้า' ?
-                    8 :
-                    t === 'กลางวัน' ?
-                    12 :
-                    t === 'เย็น' ?
-                    16 : 20
+                    t === 'เช้า'
+                        ? 8
+                        : t === 'กลางวัน'
+                        ? 12
+                        : t === 'เย็น'
+                        ? 16
+                        : 20
 
                 const jobId = CronJobs.registerNewJob(
-                    createNotificationJob(event.source.userId),
+                    createNotificationJob(event.source.userId, {
+                        drugName: drugCache.name
+                    }),
                     `${second} * * * * *`
                 )
 
@@ -331,11 +354,12 @@ bot.on('postback', async event => {
 
 const reply = (event, drug) => {
     console.log(drug)
-    event.reply([{
-            type: "flex",
-            altText: "Pill",
+    event.reply([
+        {
+            type: 'flex',
+            altText: 'Pill',
             contents: {
-                type: "bubble",
+                type: 'bubble',
                 styles: {
                     header: {
                         backgroundColor: '#3333cc'
@@ -344,96 +368,109 @@ const reply = (event, drug) => {
                 header: {
                     type: 'box',
                     layout: 'vertical',
-                    contents: [{
-                        type: 'text',
-                        text: 'รายละเอียดการแจ้งเตือน',
-                        weight: 'bold',
-                        color: '#ffffff'
-                    }]
+                    contents: [
+                        {
+                            type: 'text',
+                            text: 'รายละเอียดการแจ้งเตือน',
+                            weight: 'bold',
+                            color: '#ffffff'
+                        }
+                    ]
                 },
                 body: {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "md",
-                    contents: [{
-                        type: "box",
-                        layout: "horizontal",
-                        spacing: "md",
-                        contents: [{
-                            type: "box",
-                            layout: "vertical",
-                            spacing: "md",
-                            contents: genContent(drug)
-                        }]
-                    }]
+                    type: 'box',
+                    layout: 'vertical',
+                    spacing: 'md',
+                    contents: [
+                        {
+                            type: 'box',
+                            layout: 'horizontal',
+                            spacing: 'md',
+                            contents: [
+                                {
+                                    type: 'box',
+                                    layout: 'vertical',
+                                    spacing: 'md',
+                                    contents: genContent(drug)
+                                }
+                            ]
+                        }
+                    ]
                 }
             }
         },
         {
-            type: "flex",
-            altText: "bottom",
-            contents: drug.name ? {
-                type: "bubble",
-                body: {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "md",
-                    contents: [{
-                            type: "text",
-                            text: "หากต้องการแก้ไข ให้พิมพ์ข้อความส่งมาตามแบบข้างล่าง",
-                            wrap: true,
-                            color: '#ff4d4d'
-                        },
-                        {
-                            type: "text",
-                            text: "แก้ไข ฟิลดิ์ที่แก้ไข ข้อมูลที่ต้องการแก้",
-                            wrap: true,
-                        },
-                        {
-                            type: "text",
-                            text: "ตัวอย่าง: แก้ไข ชื่อ ตัวอย่าง",
-                            wrap: true,
-                        }
-                    ]
-                },
-                footer: {
-                    type: 'box',
-                    layout: 'vertical',
-                    spacing: 'md',
-                    contents: [{
-                        type: 'button',
-                        style: 'primary',
-                        action: {
-                            type: 'message',
-                            label: 'ตั้งการแจ้งเตือน',
-                            text: 'ยืนยัน'
-                        }
-                    }]
-                }
-            } : {
-                type: "bubble",
-                body: {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "md",
-                    contents: [{
-                            type: "text",
-                            text: "กรุณาตั้งชื่อยา",
-                            wrap: true,
-                            color: '#ff4d4d'
-                        },
-                        {
-                            type: "text",
-                            text: "ตัวอย่าง: ตั้งชื่อ ยาตัวอย่าง",
-                            wrap: true,
-                        }
-                    ]
-                }
-            }
+            type: 'flex',
+            altText: 'bottom',
+            contents: drug.name
+                ? {
+                      type: 'bubble',
+                      body: {
+                          type: 'box',
+                          layout: 'vertical',
+                          spacing: 'md',
+                          contents: [
+                              {
+                                  type: 'text',
+                                  text:
+                                      'หากต้องการแก้ไข ให้พิมพ์ข้อความส่งมาตามแบบข้างล่าง',
+                                  wrap: true,
+                                  color: '#ff4d4d'
+                              },
+                              {
+                                  type: 'text',
+                                  text:
+                                      'แก้ไข ฟิลดิ์ที่แก้ไข ข้อมูลที่ต้องการแก้',
+                                  wrap: true
+                              },
+                              {
+                                  type: 'text',
+                                  text: 'ตัวอย่าง: แก้ไข ชื่อ ตัวอย่าง',
+                                  wrap: true
+                              }
+                          ]
+                      },
+                      footer: {
+                          type: 'box',
+                          layout: 'vertical',
+                          spacing: 'md',
+                          contents: [
+                              {
+                                  type: 'button',
+                                  style: 'primary',
+                                  action: {
+                                      type: 'message',
+                                      label: 'ตั้งการแจ้งเตือน',
+                                      text: 'ยืนยัน'
+                                  }
+                              }
+                          ]
+                      }
+                  }
+                : {
+                      type: 'bubble',
+                      body: {
+                          type: 'box',
+                          layout: 'vertical',
+                          spacing: 'md',
+                          contents: [
+                              {
+                                  type: 'text',
+                                  text: 'กรุณาตั้งชื่อยา',
+                                  wrap: true,
+                                  color: '#ff4d4d'
+                              },
+                              {
+                                  type: 'text',
+                                  text: 'ตัวอย่าง: ตั้งชื่อ ยาตัวอย่าง',
+                                  wrap: true
+                              }
+                          ]
+                      }
+                  }
         }
     ])
 }
-
 
 bot.listen('/bot', 443, () => {
     console.log('bot listening on port 443')
