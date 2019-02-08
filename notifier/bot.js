@@ -127,11 +127,12 @@ function genContent(drugInfo) {
 
 function createNotificationJob(userId, opts) {
     return () => {
+        console.log(`noti to ${userId}`)
         bot.push(
             userId,
             replies.createNotificationMessage({
                 drugName: opts.drugName,
-                timeDescription: '',
+                consumption: opts.consumption,
                 cancelAction: {
                     type: 'message',
                     text: `ยกเลิก ${opts.drugName}`
@@ -329,7 +330,8 @@ bot.on('message', async event => {
 
                 const jobId = CronJobs.registerNewJob(
                     createNotificationJob(event.source.userId, {
-                        drugName: drugCache.name
+                        drugName: drugCache.name,
+                        consumption: drugCache
                     }),
                     `${second} * * * * *`
                 )

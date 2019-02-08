@@ -37,14 +37,16 @@ const createConsumptionInformationView = consumption => {
         result.push(createTextRow('วันละ', `- ครั้ง`))
     }
 
-    if (result.time !== undefined && result.time !== []) {
-        result.push(createTextRow('รับประทานเวลา', result.time.join(', ')))
+    if (consumption.time !== undefined && consumption.time !== []) {
+        result.push(createTextRow('รับประทานเวลา', consumption.time.join(', ')))
     } else {
         result.push(createTextRow('รับประทานเวลา', '-'))
     }
 
-    if (result.time2 !== undefined && result.time2 !== []) {
-        result.push(createTextRow('ช่วงที่รับประทาน', result.time2.join(', ')))
+    if (consumption.time2 !== undefined && consumption.time2 !== []) {
+        result.push(
+            createTextRow('ช่วงที่รับประทาน', consumption.time2.join(', '))
+        )
     } else {
         result.push(createTextRow('ช่วงที่รับประทาน', '-'))
     }
@@ -149,6 +151,7 @@ const createNotificationMessage = ({
     timeDescription,
     imageURL,
     drugName,
+    consumption,
     cancelAction
 }) => ({
     type: 'flex',
@@ -168,7 +171,10 @@ const createNotificationMessage = ({
                 },
                 {
                     type: 'text',
-                    text: timeDescription,
+                    text: drugName,
+                    weight: 'bold',
+                    size: 'xxl',
+                    color: '#111111',
                     align: 'center'
                 }
             ]
@@ -188,19 +194,11 @@ const createNotificationMessage = ({
             margin: 'xxl',
             spacing: 'sm',
             contents: [
+                // consumption info
                 {
                     type: 'box',
-                    layout: 'horizontal',
-                    contents: [
-                        {
-                            type: 'text',
-                            text: drugName,
-                            weight: 'bold',
-                            size: 'xxl',
-                            color: '#111111',
-                            align: 'center'
-                        }
-                    ]
+                    layout: 'vertical',
+                    contents: createConsumptionInformationView(consumption)
                 }
             ]
         },
