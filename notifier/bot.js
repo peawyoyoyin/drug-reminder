@@ -281,18 +281,18 @@ bot.on('message', async event => {
         if (event.message.text.startsWith('ยกเลิก')) {
             if (user.state === 'idle') {
                 const drugName = event.message.text.split(' ')[1]
-                for (let i = user.reminder.length-1; i >= 0; i--) {
+                for (let i = user.reminder.length - 1; i >= 0; i--) {
                     if (user.reminder[i].name === drugName) {
                         for (let j of user.reminder[i].jobs) {
                             CronJobs.stopJob(j)
                         }
                         user.reminder.splice(i, 1)
+                        event.reply({
+                            type: 'text',
+                            text: `คุณยกเลิกแจ้งเตือน ${drugName} เรียบร้อยแล้ว`
+                        })
+                        return
                     }
-                    event.reply({
-                        type: 'text',
-                        text: `คุณยกเลิกแจ้งเตือน ${drugName} เรียบร้อยแล้ว`
-                    })
-                    return
                 }
                 event.reply({
                     type: 'text',
